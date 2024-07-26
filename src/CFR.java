@@ -89,5 +89,11 @@ public class CFR {
         return containers;
     }
 
-    public static void main(String[] args) {}
+    public static void main(String[] args) {
+        // Completed Task (7 / 26 / 2024)
+        //    --> Runs code everytime a commit is done or rollback
+        //    > addStateUpdateListener(StateUpdateListener)
+        //    > StateUpdateListener --> Interface class
+        //    > onStateUpdate()     --> Interface method
+    }
 }

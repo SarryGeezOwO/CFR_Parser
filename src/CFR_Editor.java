@@ -14,6 +14,7 @@ public class CFR_Editor {
     private final File f;
     private Map<String, Map<String, String>> temporary_containers = null;
     private String selectedContainer = null;
+    private StateUpdateListener listener = null;
 
     /**
      * Constructor for CFR_Editor.
@@ -58,6 +59,13 @@ public class CFR_Editor {
         return this;
     }
 
+    // ============================== STATE LISTENERS ====================================//
+
+    public void addStateUpdateListener(@NotNull StateUpdateListener listener) {
+        if(this.listener == null)
+            this.listener = listener;
+        throw new RuntimeException("Only one listener is allowed!");
+    }
 
     // ============================ CFR FILE OPERATIONS ==================================//
 
@@ -183,6 +191,7 @@ public class CFR_Editor {
 
             // Update the variable 'containers' in CFR static class
             CFR.parseCFR(f);
+            if(listener != null) listener.onStateUpdate();
             return CFR.RESPONSE_STATUS.SUCCESS;
         }
         else try {
@@ -215,6 +224,7 @@ public class CFR_Editor {
             }
 
             CFR.parseCFR(f);
+            if(listener != null) listener.onStateUpdate();
             return CFR.RESPONSE_STATUS.SUCCESS;
         }
         else try {
