@@ -1,3 +1,5 @@
+package com.SarryTools;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
@@ -12,12 +14,12 @@ public class CFR {
     }
 
     /**
-     * Parses a given CFR file, and transforms the file contents into a <code style="color:#ebc240;">Map</code> object :
+     * Parses a given com.SarryTools.CFR file, and transforms the file contents into a <code style="color:#ebc240;">Map</code> object :
      * <pre>
      * Map&lt;String, Map&lt;String, String&gt;&gt;
      * <span style="color:GRAY;">--> ContainerName, Map&lt;Property, Value&gt; </span>
      * </pre>
-     * @param f a <b style="color:#4d7ae2;">CFR (Configuration For Rascals)</b> file format
+     * @param f a <b style="color:#4d7ae2;">com.SarryTools.CFR (Configuration For Rascals)</b> file format
      * @return <p>a Response code depending on the methods result:</p>
      *              <code style="color:#ebc240;">FAILED, SUCCESS, ERROR</code>
      */
@@ -92,8 +94,8 @@ public class CFR {
     public static void main(String[] args) {
         // Completed Task (7 / 26 / 2024)
         //    --> Runs code everytime a commit is done or rollback
-        //    > addStateUpdateListener(StateUpdateListener)
-        //    > StateUpdateListener --> Interface class
+        //    > addStateUpdateListener(com.SarryTools.StateUpdateListener)
+        //    > com.SarryTools.StateUpdateListener --> Interface class
         //    > onStateUpdate()     --> Interface method
     }
 }

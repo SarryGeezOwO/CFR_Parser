@@ -1,3 +1,5 @@
+package com.SarryTools;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.io.BufferedWriter;
@@ -17,8 +19,8 @@ public class CFR_Editor {
     private StateUpdateListener listener = null;
 
     /**
-     * Constructor for CFR_Editor.
-     * A CFR follows a certain format:
+     * Constructor for com.SarryTools.CFR_Editor.
+     * A com.SarryTools.CFR follows a certain format:
      * <pre>
      *     Container1 {
      *         Property1 : Value1;
@@ -30,7 +32,7 @@ public class CFR_Editor {
      *     }
      * </pre>
      *
-     * @param f the CFR file to be edited
+     * @param f the com.SarryTools.CFR file to be edited
      */
     public CFR_Editor(@NotNull File f) {
         this.f = f;
@@ -52,7 +54,7 @@ public class CFR_Editor {
      * Sets the selected container for editing.
      *
      * @param container the name of the container to select
-     * @return the CFR_Editor instance for method chaining
+     * @return the com.SarryTools.CFR_Editor instance for method chaining
      */
     public CFR_Editor setSelectedContainer(String container) {
         selectedContainer = container;
@@ -67,14 +69,14 @@ public class CFR_Editor {
         throw new RuntimeException("Only one listener is allowed!");
     }
 
-    // ============================ CFR FILE OPERATIONS ==================================//
+    // ============================ com.SarryTools.CFR FILE OPERATIONS ==================================//
 
 
     /**
-     * Adds new containers to the CFR file.
+     * Adds new containers to the com.SarryTools.CFR file.
      *
      * @param containers the names of the containers to add
-     * @return the CFR_Editor instance for method chaining
+     * @return the com.SarryTools.CFR_Editor instance for method chaining
      */
     public CFR_Editor addContainer        (String ... containers) {
         for(String s : containers) {
@@ -87,7 +89,7 @@ public class CFR_Editor {
      * Adds empty properties to the selected container.
      *
      * @param properties the names of the properties to add
-     * @return the CFR_Editor instance for method chaining
+     * @return the com.SarryTools.CFR_Editor instance for method chaining
      * @throws NullPointerException if no container is selected
      */
     public CFR_Editor addEmptyProperty    (String ... properties) {
@@ -105,7 +107,7 @@ public class CFR_Editor {
      *
      * @param property the name of the property to add
      * @param value the value of the property
-     * @return the CFR_Editor instance for method chaining
+     * @return the com.SarryTools.CFR_Editor instance for method chaining
      * @throws NullPointerException if no container is selected
      */
     public CFR_Editor addProperty         (String property, String value) {
@@ -121,7 +123,7 @@ public class CFR_Editor {
      *
      * @param property the name of the property to update
      * @param newValue the new value for the property
-     * @return the CFR_Editor instance for method chaining
+     * @return the com.SarryTools.CFR_Editor instance for method chaining
      * @throws NullPointerException if no container is selected
      * @throws PropertyNotFoundException if the property is not found in the selected container
      */
@@ -144,7 +146,7 @@ public class CFR_Editor {
      * Removes a property from the selected container.
      *
      * @param property the name of the property to remove
-     * @return the CFR_Editor instance for method chaining
+     * @return the com.SarryTools.CFR_Editor instance for method chaining
      * @throws NullPointerException if no container is selected
      * @throws PropertyNotFoundException if the property is not found in the selected container
      */
@@ -159,17 +161,17 @@ public class CFR_Editor {
     }
 
     /**
-     * Removes a container from the CFR file.
+     * Removes a container from the com.SarryTools.CFR file.
      *
      * @param container the name of the container to remove
-     * @return the CFR_Editor instance for method chaining
+     * @return the com.SarryTools.CFR_Editor instance for method chaining
      */
     public CFR_Editor removeContainer     (String container) {
         return this;
     }
 
     /**
-     * Commits the changes made to the CFR file, writing them to disk.
+     * Commits the changes made to the com.SarryTools.CFR file, writing them to disk.
      * Commits are saved in the commit history, this can be access through <code style="color:#ebc240;">rollback()</code>
      *
      * @param commitName the name that will be labeled in the commit history.
@@ -189,7 +191,7 @@ public class CFR_Editor {
                 return CFR.RESPONSE_STATUS.ERROR;
             }
 
-            // Update the variable 'containers' in CFR static class
+            // Update the variable 'containers' in com.SarryTools.CFR static class
             CFR.parseCFR(f);
             if(listener != null) listener.onStateUpdate();
             return CFR.RESPONSE_STATUS.SUCCESS;

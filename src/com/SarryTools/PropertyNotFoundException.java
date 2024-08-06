@@ -1,3 +1,5 @@
+package com.SarryTools;
+
 public class PropertyNotFoundException extends RuntimeException{
 
     public PropertyNotFoundException() {}
