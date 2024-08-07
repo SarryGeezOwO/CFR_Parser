@@ -87,10 +87,32 @@ public class CFR {
         return RESPONSE_STATUS.SUCCESS;
     }
 
-    private static void validateNoInlineComment(String line, String context) throws InvalidSyntaxException {
+    private static void validateNoInlineComment(@NotNull String line, String context) throws InvalidSyntaxException {
         if (line.contains("##")) {
             throw new InvalidSyntaxException("Comment is not allowed on the same line as a " + context);
         }
+    }
+
+    /**
+     * @return all the containers found in the parsed CFR file, as an array of String
+     */
+    public static String[] getContainersAsList() {
+        if(getContainers().keySet().isEmpty()) {
+            return new String[0];
+        }
+        return getContainers().keySet().toArray(new String[0]);
+    }
+
+    /**
+     *
+     * @param container the name of the container
+     * @return all the properties found in the specified Container but as an array of String
+     */
+    public static String[] getPropertiesAsList(String container) {
+        if(getContainers().keySet().isEmpty()) {
+            return new String[0];
+        }
+        return getProperties(container).keySet().toArray(new String[0]);
     }
 
     /**
@@ -134,26 +156,27 @@ public class CFR {
 
     // Completed Task (7 / 26 / 2024)
     //    --> Runs code everytime a commit is done or rollback
-    //    > addStateUpdateListener(main.java.com.SarryTools.StateUpdateListener)
-    //    > main.java.com.SarryTools.StateUpdateListener --> Interface class
+    //    > addStateUpdateListener(StateUpdateListener)
+    //    > StateUpdateListener --> Interface class
     //    > onStateUpdate()     --> Interface method
 
     // TODO : (8 / 7 / 2024)
     //      --> Implement Functions:
-    //          > validateCFR()                 // Returns a boolean if CFR file is syntax correct
-    //          > searchProperty()              // All Containers
-    //          > searchPropertyIgnoreCase()    // Ignore Capitalization
-    //          > getContainersAsList()         // Returns a String[]
-    //          > getPropertiesAsList()         // Returns a String[]
+    //          [ ]> validateCFR()                 // Syntax Checking
+    //          [ ]> searchProperty()              // All Containers
+    //          [ ]> searchPropertyIgnoreCase()    // Ignore Capitalization
+    //          [/]> getContainersAsList()         // Returns a String[]
+    //          [/]> getPropertiesAsList()         // Returns a String[]
     //      --> Implement Function Editor
-    //          > mergeContainers(target, ... toMerge)
-    //          > renameContainer()
-    //          > renameProperty()              // Based on SelectedContainer
+    //          [ ]> mergeContainers(target, ... toMerge)
+    //          [ ]> renameContainer()
+    //          [ ]> renameProperty()              // Based on SelectedContainer
 
     public static void main(String[] args) {
-        CFR_Editor editor = new CFR_Editor(new File("Sample.cfr"));
-        editor.setSelectedContainer("Settings")
-                .addProperty("Font", "Roboto")
-                .commit("Font");
+        CFR.parseCFR(new File("Sample.cfr"));
+        for(String s : CFR.getPropertiesAsList("GameObject")) {
+            System.out.println(s);
+        }
+        System.out.println(CFR.getPropertiesAsList("GameObject").length);
     }
 }
