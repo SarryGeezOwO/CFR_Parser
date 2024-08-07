@@ -10,11 +10,21 @@ import java.security.InvalidKeyException;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * @author SarryGeezOwO
+ * <hr>
+ * <p>CFR_Editor contains Functions that can directly modify a specified CFR file.</p>
+ * <br>
+ * <p>This class contains <code>Commit()</code> for save changes and <code>RollBack()</code> for reverting saved changes.</p>
+ * <br>
+ * <p>Use <code>CFR</code> for viewing and retrieval of CFR datas, this class contains many Static Functions.</p>
+ *
+ */
 public class CFR_Editor {
 
     private final Map<String, Map<String, Map<String, String>>> commitHistory = new HashMap<>();
     private final File f;
-    private Map<String, Map<String, String>> temporary_containers = null;
+    private Map<String, Map<String, String>> temporary_containers = new HashMap<>();
     private String selectedContainer = null;
     private StateUpdateListener listener = null;
 
@@ -63,13 +73,18 @@ public class CFR_Editor {
 
     // ============================== STATE LISTENERS ====================================//
 
+    /**
+     * <code>onStateUpdate()</code> will be called on every <code>commit()</code> or <code>rollback()</code>
+     *
+     * @param listener an Interface class that only has one Function.
+     */
     public void addStateUpdateListener(@NotNull StateUpdateListener listener) {
         if(this.listener == null)
             this.listener = listener;
         throw new RuntimeException("Only one listener is allowed!");
     }
 
-    // ============================ com.SarryTools.CFR FILE OPERATIONS ==================================//
+    // ============================ main.java.com.SarryTools.CFR FILE OPERATIONS ==================================//
 
 
     /**
@@ -191,7 +206,7 @@ public class CFR_Editor {
                 return CFR.RESPONSE_STATUS.ERROR;
             }
 
-            // Update the variable 'containers' in com.SarryTools.CFR static class
+            // Update the variable 'containers' in main.java.com.SarryTools.CFR static class
             CFR.parseCFR(f);
             if(listener != null) listener.onStateUpdate();
             return CFR.RESPONSE_STATUS.SUCCESS;

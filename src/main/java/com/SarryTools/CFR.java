@@ -6,6 +6,14 @@ import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * @author SarryGeezOwO
+ * <hr>
+ * <p>CFR is a class with only static Methods</p>
+ * <br>
+ * <p>This class is used only for CFR file parsing and CFR data Reading</p>
+ *
+ */
 public class CFR {
 
     private static final Map<String, Map<String, String>> containers = new HashMap<>();
@@ -41,7 +49,7 @@ public class CFR {
                 else if(line.endsWith("}")) {
                     currentContainer = null;
                 }
-                else if(currentContainer != null) {
+                else if(currentContainer != null && !line.trim().isEmpty()) {
                     String[] split  = line.split(":");
                     String property = split[0].trim();
                     String value    = split[1].replace(";", "").trim();
@@ -93,7 +101,19 @@ public class CFR {
 
     // Completed Task (7 / 26 / 2024)
     //    --> Runs code everytime a commit is done or rollback
-    //    > addStateUpdateListener(com.SarryTools.StateUpdateListener)
-    //    > com.SarryTools.StateUpdateListener --> Interface class
+    //    > addStateUpdateListener(main.java.com.SarryTools.StateUpdateListener)
+    //    > main.java.com.SarryTools.StateUpdateListener --> Interface class
     //    > onStateUpdate()     --> Interface method
+
+    // TODO : (8 / 7 / 2024)
+    //      --> Implement Functions:
+    //          > validateCFR()                 // Returns a boolean if CFR file is syntax correct
+    //          > searchProperty()              // All Containers
+    //          > searchPropertyIgnoreCase()    // Ignore Capitalization
+    //          > getContainersAsList()         // Returns a String[]
+    //          > getPropertiesAsList()         // Returns a String[]
+    //      --> Implement Function Editor
+    //          > mergeContainers(target, ... toMerge)
+    //          > renameContainer()
+    //          > renameProperty()              // Based on SelectedContainer
 }

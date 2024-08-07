@@ -1,0 +1,7 @@
+Settings {
+    Theme : Dark
+}
+
+GameObject {
+    position : 5, 5
+}
