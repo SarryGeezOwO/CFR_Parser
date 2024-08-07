@@ -72,6 +72,10 @@ public class Main {
 ## Contributions 
 Contributions are welcome! Please open an issue or submit a pull request for any changes.
 
+> **Note:** Hey there! Just a heads-up, this project is still in its early stages. It's functional but not yet super polished or optimized. I'm working on making it better, so if you have any feedback or want to contribute, I'd love your help!
+
+> Also this might sound wierd but I'm just a beginner on using GitHub and Programming in general :)
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
