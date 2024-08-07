@@ -2,10 +2,7 @@ package com.SarryTools;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.security.InvalidKeyException;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,11 +21,17 @@ public class CFR_Editor {
 
     private final Map<String, Map<String, Map<String, String>>> commitHistory = new HashMap<>();
     private final File f;
+    private final Map<String, Map<String, String>> changedContainers = new HashMap<>();
     private Map<String, Map<String, String>> temporary_containers = new HashMap<>();
     private String selectedContainer = null;
     private StateUpdateListener listener = null;
 
     /**
+     *
+     * <P>This constructor will also call CFR.parse()</P>
+     * So it's redundant to call CFR.parse()
+     * then initializing a new CFR_Editor()
+     * <hr>
      * Constructor for CFR_Editor.
      * A CFR follows a certain format:
      * <pre>
@@ -253,19 +256,36 @@ public class CFR_Editor {
 
     private void updateFileContents() throws IOException {
         BufferedWriter writer = new BufferedWriter(new FileWriter(f));
+        int lineNum = 1;
 
         for(String container : temporary_containers.keySet()) {
+            lineNum = writeComment(lineNum, writer, false);
             writer.write(container + " {");
             writer.newLine();
+            lineNum++;
             for(Map.Entry<String, String> property : temporary_containers.get(container).entrySet()) {
+                lineNum = writeComment(lineNum, writer, true);
                 writer.write("    " + property.getKey() + " : " + property.getValue() + ";");
                 writer.newLine();
+                lineNum++;
             }
             writer.write("}");
             writer.newLine();
             writer.newLine();
+            lineNum++;
+            lineNum++;
         }
         writer.flush();
         writer.close();
+    }
+
+    private int writeComment(int line, BufferedWriter writer, boolean isProperty) throws IOException {
+        if(CFR.getCommentLines().containsKey(line)) {
+            if(isProperty) writer.write("    ");
+            writer.write(CFR.getCommentLines().get(line));
+            writer.newLine();
+            return line+1;
+        }
+        return line;
     }
 }

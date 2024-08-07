@@ -1,7 +1,12 @@
-Settings {
-    Theme : Dark
+## This is a configuration for GameObjects
+GameObject {
+    ## This is a property for Position idk... :p
+    position : 5, 5;
 }
 
-GameObject {
-    position : 5, 5
+Settings {
+    ## Comment Goes here 123
+    Theme : Dark;
+    Font : Roboto;
 }
+

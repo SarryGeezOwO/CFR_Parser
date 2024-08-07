@@ -3,6 +3,7 @@ package com.SarryTools;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,6 +18,7 @@ import java.util.Map;
 public class CFR {
 
     private static final Map<String, Map<String, String>> containers = new HashMap<>();
+    private static final HashMap<Integer, String> commentLines = new HashMap<>();
     public static enum RESPONSE_STATUS {
         FAILED, SUCCESS, ERROR
     }
@@ -35,26 +37,47 @@ public class CFR {
         if(!f.getName().endsWith(".cfr"))
             return RESPONSE_STATUS.FAILED;
 
+        commentLines.clear();
         try {
             BufferedReader reader = new BufferedReader(new FileReader(f.getAbsolutePath()));
             String line;
+            int lineNum = 1;
 
             String currentContainer = null;
             while((line = reader.readLine()) != null) {
                 line = line.trim();
-                if(line.endsWith("{")) {
-                    currentContainer = line.substring(0, line.length()-1).trim();
-                    containers.put(currentContainer, new HashMap<>());
+
+                if(line.trim().startsWith("##")) {
+                    commentLines.put(lineNum, line);
+                    lineNum++;
+                    continue;
                 }
-                else if(line.endsWith("}")) {
+
+                if(line.contains("{}")) {
+                    validateNoInlineComment(line, "Container");
+                    containers.put(line.substring(0, line.length()-2).trim(), new HashMap<>());
                     currentContainer = null;
                 }
+                else if(line.trim().contains("{")) {
+                    validateNoInlineComment(line, "Container");
+                    if(line.trim().endsWith("{")) {
+                        currentContainer = line.substring(0, line.length()-1).trim();
+                        containers.put(currentContainer, new HashMap<>());
+                    }
+                }
+                else if(line.trim().contains("}")) {
+                    validateNoInlineComment(line, "closing container symbol");
+                    if(line.trim().endsWith("}"))
+                        currentContainer = null;
+                }
                 else if(currentContainer != null && !line.trim().isEmpty()) {
+                    validateNoInlineComment(line, "property");
                     String[] split  = line.split(":");
                     String property = split[0].trim();
                     String value    = split[1].replace(";", "").trim();
                     containers.get(currentContainer).put(property, value);
                 }
+                lineNum++;
             }
             reader.close();
         } catch (IOException e) {
@@ -62,6 +85,12 @@ public class CFR {
         }
 
         return RESPONSE_STATUS.SUCCESS;
+    }
+
+    private static void validateNoInlineComment(String line, String context) throws InvalidSyntaxException {
+        if (line.contains("##")) {
+            throw new InvalidSyntaxException("Comment is not allowed on the same line as a " + context);
+        }
     }
 
     /**
@@ -99,6 +128,10 @@ public class CFR {
         return containers;
     }
 
+    protected static HashMap<Integer, String> getCommentLines() {
+        return commentLines;
+    }
+
     // Completed Task (7 / 26 / 2024)
     //    --> Runs code everytime a commit is done or rollback
     //    > addStateUpdateListener(main.java.com.SarryTools.StateUpdateListener)
@@ -116,4 +149,11 @@ public class CFR {
     //          > mergeContainers(target, ... toMerge)
     //          > renameContainer()
     //          > renameProperty()              // Based on SelectedContainer
+
+    public static void main(String[] args) {
+        CFR_Editor editor = new CFR_Editor(new File("Sample.cfr"));
+        editor.setSelectedContainer("Settings")
+                .addProperty("Font", "Roboto")
+                .commit("Font");
+    }
 }
