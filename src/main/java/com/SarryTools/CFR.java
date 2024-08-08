@@ -3,9 +3,7 @@ package com.SarryTools;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author SarryGeezOwO
@@ -19,6 +17,7 @@ public class CFR {
 
     private static final Map<String, Map<String, String>> containers = new HashMap<>();
     private static final HashMap<Integer, String> commentLines = new HashMap<>();
+    private static boolean isCFRParsed = false;
     public static enum RESPONSE_STATUS {
         FAILED, SUCCESS, ERROR
     }
@@ -47,7 +46,7 @@ public class CFR {
             while((line = reader.readLine()) != null) {
                 line = line.trim();
 
-                if(line.trim().startsWith("##")) {
+                if(line.startsWith("##")) {
                     commentLines.put(lineNum, line);
                     lineNum++;
                     continue;
@@ -58,19 +57,19 @@ public class CFR {
                     containers.put(line.substring(0, line.length()-2).trim(), new HashMap<>());
                     currentContainer = null;
                 }
-                else if(line.trim().contains("{")) {
+                else if(line.contains("{")) {
                     validateNoInlineComment(line, "Container");
-                    if(line.trim().endsWith("{")) {
+                    if(line.endsWith("{")) {
                         currentContainer = line.substring(0, line.length()-1).trim();
                         containers.put(currentContainer, new HashMap<>());
                     }
                 }
-                else if(line.trim().contains("}")) {
+                else if(line.contains("}")) {
                     validateNoInlineComment(line, "closing container symbol");
-                    if(line.trim().endsWith("}"))
+                    if(line.endsWith("}"))
                         currentContainer = null;
                 }
-                else if(currentContainer != null && !line.trim().isEmpty()) {
+                else if(currentContainer != null && !line.isEmpty()) {
                     validateNoInlineComment(line, "property");
                     String[] split  = line.split(":");
                     String property = split[0].trim();
@@ -84,19 +83,66 @@ public class CFR {
             return RESPONSE_STATUS.ERROR;
         }
 
+        isCFRParsed = true;
         return RESPONSE_STATUS.SUCCESS;
     }
 
-    private static void validateNoInlineComment(@NotNull String line, String context) throws InvalidSyntaxException {
+    private static void validateNoInlineComment(@NotNull String line, String context) throws CFRInvalidSyntaxException {
         if (line.contains("##")) {
-            throw new InvalidSyntaxException("Comment is not allowed on the same line as a " + context);
+            throw new CFRInvalidSyntaxException("Comment is not allowed on the same line as a " + context);
         }
     }
 
     /**
+     * Loops through all the containers and searches for the target property,
+     * if the container does own that property the container will be added to the list
+     *
+     * @param property the name of the property
+     * @return a <code style="color:#ebc240;">List&lt;String&gt;</code> representing all the containers that owns the target property
+     * @throws CFRNotFoundException if no CFR has been parsed yet
+     */
+    public static List<String> searchProperty(String property) {
+        if(!isCFRParsed) throw new CFRNotFoundException("CFR is missing, unable to search for properties");
+
+        List<String> arr = new ArrayList<>();
+        for(String container : getContainers().keySet()) {
+            if(getContainers().get(container).containsKey(property)) {
+                arr.add(container);
+            }
+        }
+        return arr;
+    }
+
+    /**
+     * Loops through all the containers and searches for the target property ignoring case sensitivity,
+     * if the container does own that property the container will be added to the list
+     *
+     * @param property the name of the property
+     * @return a <code style="color:#ebc240;">List&lt;String&gt;</code> representing all the containers that owns the target property
+     * @throws CFRNotFoundException if no CFR has been parsed yet
+     */
+    public static List<String> searchPropertyIgnoreCase(String property) {
+        if(!isCFRParsed) throw new CFRNotFoundException("CFR is missing, unable to search for properties");
+
+        List<String> arr = new ArrayList<>();
+        for(String container : getContainers().keySet()) {
+            for(String prop : getPropertiesAsList(container)) {
+                if(prop.equalsIgnoreCase(property)) {
+                    arr.add(container);
+                    break;
+                }
+            }
+        }
+        return arr;
+    }
+
+    /**
      * @return all the containers found in the parsed CFR file, as an array of String
+     * @throws CFRNotFoundException if no CFR has been parsed yet
      */
     public static String[] getContainersAsList() {
+        if(!isCFRParsed) throw new CFRNotFoundException("CFR is missing, unable to retrieve Containers");
+
         if(getContainers().keySet().isEmpty()) {
             return new String[0];
         }
@@ -107,8 +153,11 @@ public class CFR {
      *
      * @param container the name of the container
      * @return all the properties found in the specified Container but as an array of String
+     * @throws CFRNotFoundException if no CFR has been parsed yet
      */
     public static String[] getPropertiesAsList(String container) {
+        if(!isCFRParsed) throw new CFRNotFoundException("CFR is missing, unable to retrieve Properties");
+
         if(getContainers().keySet().isEmpty()) {
             return new String[0];
         }
@@ -121,14 +170,17 @@ public class CFR {
      * @param container the name of the container
      * @param property the property to retrieve
      * @return the property and its value as a Map.Entry
-     * @throws PropertyNotFoundException if the property is not found in the specified container
+     * @throws CFRPropertyNotFoundException if the property is not found in the specified container
+     * @throws CFRNotFoundException if no CFR has been parsed yet
      */
     public static Map.Entry<String, String> getProperty(@NotNull String container, @NotNull String property) {
+        if(!isCFRParsed) throw new CFRNotFoundException("CFR is missing, unable to retrieve properties");
+
         for(Map.Entry<String, String> entry : getProperties(container).entrySet()) {
             if(property.equals(entry.getKey()))
                 return entry;
         }
-        throw new PropertyNotFoundException("Property not found!");
+        throw new CFRPropertyNotFoundException("Property not found!");
     }
 
     /**
@@ -136,8 +188,10 @@ public class CFR {
      *
      * @param container the name of the container
      * @return a Map of properties and their values for the specified container
+     * @throws CFRNotFoundException if no CFR has been parsed yet
      */
     public static Map<String, String> getProperties(@NotNull String container) {
+        if(!isCFRParsed) throw new CFRNotFoundException("CFR is missing, unable to retrieve properties");
         return containers.get(container);
     }
 
@@ -145,8 +199,10 @@ public class CFR {
      * Retrieves all containers and their properties.
      *
      * @return a Map of container names to their respective properties and values
+     * @throws CFRNotFoundException if no CFR has been parsed yet
      */
     public static Map<String, Map<String, String>> getContainers() {
+        if(!isCFRParsed) throw new CFRNotFoundException("CFR is missing, unable to retrieve Containers");
         return containers;
     }
 
@@ -163,8 +219,8 @@ public class CFR {
     // TODO : (8 / 7 / 2024)
     //      --> Implement Functions:
     //          [ ]> validateCFR()                 // Syntax Checking
-    //          [ ]> searchProperty()              // All Containers
-    //          [ ]> searchPropertyIgnoreCase()    // Ignore Capitalization
+    //          [/]> searchProperty()              // All Containers
+    //          [/]> searchPropertyIgnoreCase()    // Ignore Capitalization
     //          [/]> getContainersAsList()         // Returns a String[]
     //          [/]> getPropertiesAsList()         // Returns a String[]
     //      --> Implement Function Editor
@@ -178,5 +234,6 @@ public class CFR {
             System.out.println(s);
         }
         System.out.println(CFR.getPropertiesAsList("GameObject").length);
+        System.out.println(searchPropertyIgnoreCase("PoSitIon"));
     }
 }

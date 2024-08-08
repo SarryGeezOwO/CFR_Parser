@@ -143,13 +143,13 @@ public class CFR_Editor {
      * @param newValue the new value for the property
      * @return the <code>CFR_Editor</code> instance for method chaining
      * @throws NullPointerException if no container is selected
-     * @throws PropertyNotFoundException if the property is not found in the selected container
+     * @throws CFRPropertyNotFoundException if the property is not found in the selected container
      */
     public CFR_Editor setPropertyValue    (String property, String newValue) {
         if(selectedContainer == null)
             throw new NullPointerException("No Container selected...");
         if(!temporary_containers.get(selectedContainer).containsKey(property))
-            throw new PropertyNotFoundException("Property not found in container: " + selectedContainer);
+            throw new CFRPropertyNotFoundException("Property not found in container: " + selectedContainer);
 
         for(Map.Entry<String, String> entry : temporary_containers.get(selectedContainer).entrySet()) {
             if(entry.getKey().equals(property)) {
@@ -166,13 +166,13 @@ public class CFR_Editor {
      * @param property the name of the property to remove
      * @return the <code>CFR_Editor</code> instance for method chaining
      * @throws NullPointerException if no container is selected
-     * @throws PropertyNotFoundException if the property is not found in the selected container
+     * @throws CFRPropertyNotFoundException if the property is not found in the selected container
      */
     public CFR_Editor removeProperty      (String property) {
         if(selectedContainer == null)
             throw new NullPointerException("No Container selected...");
         if(!temporary_containers.get(selectedContainer).containsKey(property))
-            throw new PropertyNotFoundException("Property not found in container: " + selectedContainer);
+            throw new CFRPropertyNotFoundException("Property not found in container: " + selectedContainer);
 
         temporary_containers.get(selectedContainer).remove(property);
         return this;
