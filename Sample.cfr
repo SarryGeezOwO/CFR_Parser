@@ -1,7 +1,7 @@
 ## This is a configuration for GameObjects
 GameObject {
     ## This is a property for Position idk... :p
-    position : 5, 5;
+    Position : 5, 5;
 }
 
 Settings {

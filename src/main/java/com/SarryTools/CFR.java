@@ -18,6 +18,7 @@ public class CFR {
     private static final Map<String, Map<String, String>> containers = new HashMap<>();
     private static final HashMap<Integer, String> commentLines = new HashMap<>();
     private static boolean isCFRParsed = false;
+    private static String fileName;
     public static enum RESPONSE_STATUS {
         FAILED, SUCCESS, ERROR
     }
@@ -36,6 +37,7 @@ public class CFR {
         if(!f.getName().endsWith(".cfr"))
             return RESPONSE_STATUS.FAILED;
 
+        fileName = f.getName().substring(0, f.getName().indexOf(".cfr"));
         commentLines.clear();
         try {
             BufferedReader reader = new BufferedReader(new FileReader(f.getAbsolutePath()));
@@ -157,7 +159,6 @@ public class CFR {
      */
     public static String[] getPropertiesAsList(String container) {
         if(!isCFRParsed) throw new CFRNotFoundException("CFR is missing, unable to retrieve Properties");
-
         if(getContainers().keySet().isEmpty()) {
             return new String[0];
         }
@@ -206,6 +207,17 @@ public class CFR {
         return containers;
     }
 
+    /**
+     * Checks if there is a parsed CFR, if there is returns the file name excluding the file extension
+     *
+     * @return the name of the most recent parsed CFR File
+     * @throws CFRNotFoundException if no CFR has been parsed yet
+     */
+    public static String getParsedCFRName() {
+        if(!isCFRParsed) throw new CFRNotFoundException("CFR is missing");
+        return fileName;
+    }
+
     protected static HashMap<Integer, String> getCommentLines() {
         return commentLines;
     }
@@ -227,13 +239,4 @@ public class CFR {
     //          [ ]> mergeContainers(target, ... toMerge)
     //          [ ]> renameContainer()
     //          [ ]> renameProperty()              // Based on SelectedContainer
-
-    public static void main(String[] args) {
-        CFR.parseCFR(new File("Sample.cfr"));
-        for(String s : CFR.getPropertiesAsList("GameObject")) {
-            System.out.println(s);
-        }
-        System.out.println(CFR.getPropertiesAsList("GameObject").length);
-        System.out.println(searchPropertyIgnoreCase("PoSitIon"));
-    }
 }
