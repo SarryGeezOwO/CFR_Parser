@@ -209,7 +209,7 @@ public class CFR_Editor {
                 return CFR.RESPONSE_STATUS.ERROR;
             }
 
-            // Update the variable 'containers' in main.java.com.SarryTools.CFR static class
+            // Update the variable 'containers' in CFR static class
             CFR.parseCFR(f);
             if(listener != null) listener.onStateUpdate();
             return CFR.RESPONSE_STATUS.SUCCESS;
@@ -220,6 +220,30 @@ public class CFR_Editor {
             throw new RuntimeException(e);
         }
     }
+
+
+    /**
+     * Commits the changes made to the CFR file, writing them to disk.
+     *
+     * @return <p>a Response code depending on the methods result:</p>
+     *              <code style="color:#ebc240;">FAILED, SUCCESS, ERROR</code>
+     */
+    public CFR.RESPONSE_STATUS commit()  {
+        if(temporary_containers == null)
+            return CFR.RESPONSE_STATUS.FAILED;
+
+        try {
+            updateFileContents();
+        } catch (IOException e) {
+            return CFR.RESPONSE_STATUS.ERROR;
+        }
+
+        // Update the variable 'containers' in CFR static class
+        CFR.parseCFR(f);
+        if(listener != null) listener.onStateUpdate();
+        return CFR.RESPONSE_STATUS.SUCCESS;
+    }
+
 
     /**
      * Rolls back to a previous commit based on the commit name and updates the file.

@@ -2,6 +2,13 @@
 GameObject {
     ## This is a property for Position idk... :p
     Position : 5, 5;
+    Name : Player
+}
+
+Weapon {
+    Damage : 420
+    Knockback : 69
+    Durability : 10
 }
 
 Settings {

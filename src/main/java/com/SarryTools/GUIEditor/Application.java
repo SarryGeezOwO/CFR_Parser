@@ -25,7 +25,7 @@ public class Application extends JFrame {
 
     public static void main(String[] args) {
         FlatJetBrainsMonoFont.install();
-        UIManager.put("defaultFont", new Font(FlatJetBrainsMonoFont.FAMILY, Font.PLAIN, 14));
+        UIManager.put("defaultFont", new Font(FlatJetBrainsMonoFont.FAMILY, Font.PLAIN, 15));
 
         FlatLaf.registerCustomDefaultsSource("Configurations.FlatLaf");
         FlatArcDarkIJTheme.setup();
